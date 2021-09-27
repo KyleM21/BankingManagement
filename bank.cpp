@@ -48,7 +48,7 @@ void account::create_account(){
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			continue;
 	    }
-	    else break;
+	    
 	    if(balance<5 && type=='C'){
 			cout << "\nPlease enter a number above $5: ";
 			cin.clear();
