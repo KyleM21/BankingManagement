@@ -8,7 +8,7 @@
 
 using namespace std;
 
-//This function creates the account by filling in the variables
+//This function gets the account information from the user and stores it
 void account::create_account(){
 	cout<<"\nEnter account number: ";
 	while (true){
@@ -25,7 +25,7 @@ void account::create_account(){
 	cin.ignore();
 	cin.getline(name,50);
 	
-	cout<<"\nEnter C for a checking account, or S for a savings account (C/S): ";
+	cout<<"\nEnter C for a checking account, or S for a savings account (C/S)\nPlease note that Checking accounts have a 5$ minimum, Savings are 100$ minimum: ";
 	while(true){
 		cin >> type;
 		type=toupper(type);
@@ -35,9 +35,10 @@ void account::create_account(){
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			continue;
 		}
+		else break;
 	}
 	
-	cout<<("\nEnter the initial ammount of money to be in the account, 5$ minimum: ");
+	cout<<("\nEnter the initial ammount of money to be in the account: ");
 	while (true){
 	    cin >> balance;
 	    if (!cin)
@@ -48,6 +49,19 @@ void account::create_account(){
 			continue;
 	    }
 	    else break;
+	    if(balance<5 && type=='C'){
+			cout << "\nPlease enter a number above $5: ";
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			continue;
+		}
+		else if(balance<1000 && type=='S'){
+			cout << "\nPlease enter a number above $1,000: ";
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			continue;
+		}
+		else break;
   	}
   	
 	cout<<"\nAccount Created successfully!";
