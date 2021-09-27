@@ -8,6 +8,7 @@
 
 using namespace std;
 
+//This function creates the account by filling in the variables
 void account::create_account(){
 	cout<<"\nEnter account number: ";
 	while (true){
@@ -52,14 +53,16 @@ void account::create_account(){
 	cout<<"\nAccount Created successfully!";
 }
 
+//This function prints out the info of the account
 void account::show_account() const{
-	cout<<"\nAccount No. : "<<acno;
-	cout<<"\nAccount Holder Name : "<<name;
-	cout<<"\nType of Account : "<<type;
-	cout<<"\nBalance amount : "<<balance;
+	cout<<"\nAccount Noumber: "<<acno;
+	cout<<"\nAccount Holder: "<<name;
+	cout<<"\nAccount Type: "<<type;
+	cout<<"\nAccount Balance:  "<<balance;
 	
 }
 
+//This function lets the user modify account information
 void account::modify(){
 	cout<<"\nAccount No. : "<<acno;
 	cout<<"\nModify Account Holder Name : ";
@@ -72,13 +75,17 @@ void account::modify(){
 	cin>>balance;
 }
 
+//This function handles depositing money into the account
 void account::depo(float x){
 	balance+=x;
 }
 
+//This function handles withdrawing money from the account
 void account::withdraw(float x){
 	balance-=x;
 }
+
+//This function prints out a report of the account
 void account::report() const{
 	cout<<"\nAccount Number: "<<acno;
 	cout<<"\nAccount Holder: "<<name;
@@ -86,27 +93,31 @@ void account::report() const{
 	cout<<"\nAccount Balance: "<<balance;
 }
 
+//This function gets the account number
 float account::getAccount(){
 	return acno;
 }
 
+//This function gets the account balance
 float account::getBalance(){
 	return balance;
 }
 
-char account::getType() const{
-	return type;
-}
+////This function gets the account type
+//char account::getType() const{
+//	return type;
+//}
 
-void write_account();	//function to write record in binary file
-void display_ac(int);	//function to display account details given by user
-void modify_account(int);	//function to modify record of file
-void delete_account(int);	//function to delete record of file
-void display_all();		//function to display all account details
-void deposit_withdraw(float, int); // function to desposit/withdraw amount for given account
-void intro();	//introductory screen function
+void write_account();				//This function writes the account to the binary file
+void display_ac(int);				//This function displays the account that corresponds to the given account number
+void modify_account(int);			//This function modifies the account and writes it to the binary file
+void delete_account(int);			//This function deletes the selected account
+void display_all();					//This function displays every account
+void deposit_withdraw(float, int); 	//This function will handle depositing/withdrawing money
+void intro();						//This function displays the intro
 float getNum();
 
+//The main function displays the main menu and allows the user to select what they would like to do 
 int main(){
 	char ch;	
 	int num = 0;
@@ -170,6 +181,7 @@ int main(){
 	return 0;
 }
 
+//This function validates that all numbers given to the program are infact numbers.
 float getNum(){
 	float x;
 	while (true){
@@ -186,6 +198,7 @@ float getNum(){
   	return x;
 }
 
+//This function writes the account to the binary file
 void write_account(){
 	account ac;
 	ofstream outFile;
@@ -195,6 +208,7 @@ void write_account(){
 	outFile.close();
 }
 
+//This function handles depositing and withdrawing money
 void deposit_withdraw(float n, int option){
 	float amt;
 	bool found=false;
@@ -211,14 +225,14 @@ void deposit_withdraw(float n, int option){
 		if(ac.getAccount()==n)	{
 			ac.show_account();
 			if(option==1){
-				cout<<"\n\n\tDeposit money!";
+				cout<<"\n\n\t****Depositing money****";
 				cout<<"\n\nEnter The amount to be deposited: ";
 				cin>>amt;
 				ac.depo(amt);
 			}
 			if(option==2){
 				
-				cout<<"\n\n\tWithdraw money!";
+				cout<<"\n\n\t****Withdrawing money****";
 				cout<<"\n\nEnter The amount to be withdraw: ";
 				cin>>amt;
 				int bal=ac.getBalance()-amt;
@@ -240,6 +254,7 @@ void deposit_withdraw(float n, int option){
 		cout<<"\n\nAccount Not Found!";
 }
 
+//This function displays the account that corresponds to the given account number
 void display_ac(int n){
 	account ac;
 	bool found=false;
@@ -264,6 +279,7 @@ void display_ac(int n){
 		cout<<"\n\nNo account exists with that number";
 }
 
+//This function displays every account
 void display_all(){
 	account ac;
 	ifstream inFile;
@@ -282,6 +298,7 @@ void display_all(){
 	inFile.close();
 }
 
+//This function lets the user modify their account
 void modify_account(int n){
 	bool found=false;
 	account ac;
@@ -309,8 +326,8 @@ void modify_account(int n){
 		cout<<"\n\nAccount Not Found!";
 }
 
-void delete_account(int n)
-{
+//This function deletes the selected account
+void delete_account(int n){
 	account ac;
 	ifstream inFile;
 	ofstream outFile;
@@ -336,6 +353,7 @@ void delete_account(int n)
 	cout<<"\n\n\tYour account has been deleted";
 }
 
+//This function displays the intro text and gives credit where it is due!
 void intro(){
 	cout<<"\nWelcome to my banking program!";
 	cout<<"\nWritten by Kyle Marcoux";

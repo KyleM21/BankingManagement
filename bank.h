@@ -17,5 +17,5 @@ class account{
 		void report() const;
 		float getAccount();
 		float getBalance();
-		char getType() const;
+		//char getType() const;
 };
