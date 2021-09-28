@@ -4,12 +4,14 @@
 #include <fstream>
 #include <limits>
 #include <cctype>
+#include <vector>
+#include <algorithm>
 #include "bank.h"
 
 using namespace std;
 
-//This function gets the account information from the user and stores it
-void account::create_account(){
+// This function gets the account information from the user and stores it
+void account::createAccount(vector<int>& v){
 	cout<<"\nEnter account number: ";
 	while (true){
 	    cin >> acno;
@@ -19,6 +21,13 @@ void account::create_account(){
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			continue;
 	    }
+	    if(  find(v.begin(), v.end(), acno) != v.end()  ){
+			cout << "\nThis account number is already in use, please input a new one: ";
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			continue;
+	    	
+		}
 	    else break;
   	}
 	cout<<"\nPlease enter your full name: ";
@@ -67,8 +76,8 @@ void account::create_account(){
 	cout<<"\nAccount Created successfully!";
 }
 
-//This function prints out the info of the account
-void account::show_account() const{
+// This function prints out the info of the account
+void account::showAccount() const{
 	cout<<"\nAccount Noumber: "<<acno;
 	cout<<"\nAccount Holder: "<<name;
 	cout<<"\nAccount Type: "<<type;
@@ -76,7 +85,7 @@ void account::show_account() const{
 	
 }
 
-//This function lets the user modify account information
+// This function lets the user modify account information
 void account::modify(){
 	cout<<"\nAccount No. : "<<acno;
 	cout<<"\nModify Account Holder Name : ";
@@ -89,17 +98,17 @@ void account::modify(){
 	cin>>balance;
 }
 
-//This function handles depositing money into the account
+// This function handles depositing money into the account
 void account::depo(float x){
 	balance+=x;
 }
 
-//This function handles withdrawing money from the account
+// This function handles withdrawing money from the account
 void account::withdraw(float x){
 	balance-=x;
 }
 
-//This function prints out a report of the account
+// This function prints out a report of the account
 void account::report() const{
 	cout<<"\nAccount Number: "<<acno;
 	cout<<"\nAccount Holder: "<<name;
@@ -107,32 +116,30 @@ void account::report() const{
 	cout<<"\nAccount Balance: "<<balance;
 }
 
-//This function gets the account number
-float account::getAccount(){
+// This function gets the account number
+int account::getAccount(){
 	return acno;
 }
 
-//This function gets the account balance
+// This function gets the account balance
 float account::getBalance(){
 	return balance;
 }
 
-////This function gets the account type
-//char account::getType() const{
-//	return type;
-//}
-
-void write_account();				//This function writes the account to the binary file
-void display_ac(int);				//This function displays the account that corresponds to the given account number
-void modify_account(int);			//This function modifies the account and writes it to the binary file
-void delete_account(int);			//This function deletes the selected account
-void display_all();					//This function displays every account
-void deposit_withdraw(float, int); 	//This function will handle depositing/withdrawing money
-void intro();						//This function displays the intro
+int writeAccount(vector<int>&);			// This function writes the account to the binary file
+void displayAc(int);					// This function displays the account that corresponds to the given account number
+void modifyAccount(int);				// This function modifies the account and writes it to the binary file
+void deleteAccount(vector<int>&, int);	// This function deletes the selected account
+void displayAll();						// This function displays every account
+void fillVector(vector<int>&);			// This function populates the vector of usernames if there is a previous account.dat file
+void depositWithdraw(float, int); 		// This function will handle depositing/withdrawing money
+void intro();							// This function displays the intro
 float getNum();
 
-//The main function displays the main menu and allows the user to select what they would like to do 
+// The main function displays the main menu and allows the user to select what they would like to do 
 int main(){
+	vector<int> accounts;
+	fillVector(accounts);
 	char ch;	
 	int num = 0;
 	intro();
@@ -154,35 +161,35 @@ int main(){
 		switch(ch)
 		{
 		case '1':
-			write_account();
+			accounts.push_back(writeAccount(accounts));
 			break;
 		case '2':
 			cout<<"\n\n\tEnter The account No. : ";
 			num = getNum();
-			deposit_withdraw(num, 1);
+			depositWithdraw(num, 1);
 			break;
 		case '3':
 			cout<<"\n\n\tEnter The account No. : ";
 			num = getNum();
-			deposit_withdraw(num, 2);
+			depositWithdraw(num, 2);
 			break;
 		case '4': 
 			cout<<"\n\n\tEnter The account No. : ";
 			num = getNum();
-			display_ac(num);
+			displayAc(num);
 			break;
 		case '5':
-			display_all();
+			displayAll();
 			break;
 		case '6':
 			cout<<"\n\n\tEnter The account No. : ";
 			num = getNum();
-			delete_account(num);
+			deleteAccount(accounts, num);
 			break;
 		 case '7':
 			cout<<"\n\n\tEnter The account No. : ";
 			num = getNum();
-			modify_account(num);
+			modifyAccount(num);
 			break;
 		 case '8':
 			cout<<"\n\n\tThanks for using the bank management system";
@@ -195,7 +202,7 @@ int main(){
 	return 0;
 }
 
-//This function validates that all numbers given to the program are infact numbers.
+// This function validates that all numbers given to the program are infact numbers.
 float getNum(){
 	float x;
 	while (true){
@@ -212,18 +219,19 @@ float getNum(){
   	return x;
 }
 
-//This function writes the account to the binary file
-void write_account(){
+// This function writes the account to the binary file
+int writeAccount(vector<int>& x){
 	account ac;
 	ofstream outFile;
 	outFile.open("account.dat",ios::binary|ios::app);
-	ac.create_account();
+	ac.createAccount(x);
 	outFile.write(reinterpret_cast<char *> (&ac), sizeof(account));
 	outFile.close();
+	return ac.getAccount();
 }
 
-//This function handles depositing and withdrawing money
-void deposit_withdraw(float n, int option){
+// This function handles depositing and withdrawing money
+void depositWithdraw(float n, int option){
 	float amt;
 	bool found=false;
 	account ac;
@@ -237,7 +245,7 @@ void deposit_withdraw(float n, int option){
 		
 		File.read(reinterpret_cast<char *> (&ac), sizeof(account));
 		if(ac.getAccount()==n)	{
-			ac.show_account();
+			ac.showAccount();
 			if(option==1){
 				cout<<"\n\n\t****Depositing money****";
 				cout<<"\n\nEnter The amount to be deposited: ";
@@ -268,8 +276,8 @@ void deposit_withdraw(float n, int option){
 		cout<<"\n\nAccount Not Found!";
 }
 
-//This function displays the account that corresponds to the given account number
-void display_ac(int n){
+// This function displays the account that corresponds to the given account number
+void displayAc(int n){
 	account ac;
 	bool found=false;
 	ifstream inFile;
@@ -283,7 +291,7 @@ void display_ac(int n){
 	cout<<"\nAccount Details\n";
     while(inFile.read(reinterpret_cast<char *> (&ac), sizeof(account))){
 		if(ac.getAccount()==n){
-			ac.show_account();
+			ac.showAccount();
 			found=true;
 		}
 	}
@@ -293,8 +301,8 @@ void display_ac(int n){
 		cout<<"\n\nNo account exists with that number";
 }
 
-//This function displays every account
-void display_all(){
+// This function displays every account
+void displayAll(){
 	account ac;
 	ifstream inFile;
 	inFile.open("account.dat",ios::binary);
@@ -305,15 +313,33 @@ void display_all(){
 	cout<<"\n\n\t\t*****ACCOUNT HOLDER LIST*****\n\n";
 	
 	while(inFile.read(reinterpret_cast<char *> (&ac), sizeof(account))){
-		
 		ac.report();
 		cout<<"\n";
 	}
 	inFile.close();
 }
 
-//This function lets the user modify their account
-void modify_account(int n){
+// This function fills the vector with data from the present account.dat file, if any 
+void fillVector(vector<int>& a){
+	account ac;
+	ifstream inFile;
+	inFile.open("account.dat",ios::binary);
+	if(!inFile){
+		return;
+	}
+	cout<<"\n\nPrevious Account file read successfully\n\n";
+	
+	while(inFile.read(reinterpret_cast<char *> (&ac), sizeof(account))){
+		int i = 0;
+		a.push_back(ac.getAccount());
+		i++;
+		//cout<<"\n"<<ac.getAccount();
+	}
+	inFile.close();
+}
+
+// This function lets the user modify their account
+void modifyAccount(int n){
 	bool found=false;
 	account ac;
 	fstream File;
@@ -325,7 +351,7 @@ void modify_account(int n){
 	while(!File.eof() && found==false){
 		File.read(reinterpret_cast<char *> (&ac), sizeof(account));
 		if(ac.getAccount()==n){
-			ac.show_account();
+			ac.showAccount();
 			cout<<"\n\nPlease enter the new details of the account!"<<endl;
 			ac.modify();
 			int pos=(-1)*static_cast<int>(sizeof(account));
@@ -340,8 +366,10 @@ void modify_account(int n){
 		cout<<"\n\nAccount Not Found!";
 }
 
-//This function deletes the selected account
-void delete_account(int n){
+// This function deletes the selected account, and modifies the open account list 
+// In actual banking scenarios I don't believe account numbers are reused but in this case
+// it was a challenge to add the functionality
+void deleteAccount(vector<int>& d, int n){
 	account ac;
 	ifstream inFile;
 	ofstream outFile;
@@ -362,12 +390,16 @@ void delete_account(int n){
 	}
 	inFile.close();
 	outFile.close();
+	
+	// Clears account number from vector
+	d.erase(find(d.begin(), d.end(), ac.getAccount()));
+	
 	remove("account.dat");
 	rename("Temp.dat","account.dat");
 	cout<<"\n\n\tYour account has been deleted";
 }
 
-//This function displays the intro text and gives credit where it is due!
+// This function displays the intro text and gives credit where it is due!
 void intro(){
 	cout<<"\nWelcome to my banking program!";
 	cout<<"\nWritten by Kyle Marcoux";

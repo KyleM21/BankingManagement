@@ -1,5 +1,6 @@
 // bank.h
 #include <string>
+#include <vector>
 
 class account{
 	private:
@@ -9,13 +10,12 @@ class account{
 		char type;
 	
 	public:
-		void create_account();
-		void show_account() const;
+		void createAccount(std::vector<int>&);
+		void showAccount() const;
 		void modify();
 		void depo(float);
 		void withdraw(float);
 		void report() const;
-		float getAccount();
+		int getAccount();
 		float getBalance();
-		//char getType() const;
 };
