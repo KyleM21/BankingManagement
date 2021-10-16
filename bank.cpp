@@ -8,6 +8,7 @@
 #include <algorithm>
 #include "bank.h"
 
+// USING NAMESPACE STD BECAUSE THIS IS EXAMPLE CODE
 using namespace std;
 
 // This function gets the account information from the user and stores it
