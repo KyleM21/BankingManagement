@@ -1,4 +1,7 @@
 // bank.h
+#ifndef BANK_H // include guard
+#define BANK_H
+
 #include <string>
 #include <vector>
 
