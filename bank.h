@@ -22,3 +22,5 @@ class account{
 		int getAccount();
 		float getBalance();
 };
+
+#endif
